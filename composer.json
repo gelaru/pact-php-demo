@@ -1,0 +1,12 @@
+{
+  "require": {
+    "pact/pact": "*",
+    "phpunit/phpunit": "*",
+    "guzzlehttp/guzzle": "~6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "ZooConsumer\\": "src/"
+    }
+  }
+}
