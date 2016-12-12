@@ -2,7 +2,9 @@
   "require": {
     "pact/pact": "*",
     "phpunit/phpunit": "*",
-    "guzzlehttp/guzzle": "~6.0"
+    "guzzlehttp/guzzle": "~6.0",
+    "madkom/pact-broker-client": "^1.0",
+    "php-http/guzzle6-adapter": "^1.1"
   },
   "autoload": {
     "psr-4": {
