@@ -1,7 +1,4 @@
-First try of using pact (setup from: https://github.com/andykelk/pacStart the mock server: bundle exec pact-mock-service -p 1234 --pact-specification-version 2.0.0 -l log/pact.logs --pact-dir tmp/pacts
-
-Run phpunit: ./vendor/bin/phpunit
-Inspect the pact file in tmp/pactst-php) 
+First try of using pact (setup from: https://github.com/andykelk/pact-php)
 
 1. Clone the repo
 2. Install pact mock service:
