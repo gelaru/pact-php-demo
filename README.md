@@ -8,8 +8,7 @@
 4. Install dependencies: php composer.phar install
 5. Start the mock server: `bundle exec pact-mock-service -p 1234 --pact-specification-version 2.0.0 -l log/pact.logs --pact-dir tmp/pacts`
 
-6. Setup [Pact Broker](https://github.com/bethesque/pact_broker)
-    instance with docker-compose.
+6. Setup [Pact Broker](https://github.com/bethesque/pact_broker) instance with docker-compose ([see](https://github.com/brancz/pact_broker_pg_docker)).
 
     run
 
