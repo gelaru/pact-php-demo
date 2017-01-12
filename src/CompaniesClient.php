@@ -1,10 +1,10 @@
 <?php
 
-namespace ZooConsumer;
+namespace CompaniesConsumer;
 
 use GuzzleHttp\Client;
 
-class ZooClient
+class CompaniesClient
 {
 
     public function __construct($baseUrl)
@@ -18,18 +18,18 @@ class ZooClient
     }
 
     /**
-     * @param $name
-     * @return Alligator
+     * @param $id
+     * @return Company
      */
-    public function getAlligatorByName($name)
+    public function getCompanyById($id)
     {
-        $response = $this->client->get(sprintf('/alligators/%s', $name), [ 'headers' => ['Accept' => 'application/json']]);
+        $response = $this->client->get(sprintf('/companies/%s', $id), [ 'headers' => ['Accept' => 'application/json']]);
 
         $content = $response->getBody()->getContents();
 
-        $alligator = json_decode($content);
+        $company = json_decode($content, true);
 
-        return new Alligator($alligator->name);
+        return new Company($company);
     }
 
 }
