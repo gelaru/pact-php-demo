@@ -3,6 +3,7 @@
 namespace Consumer\Tests;
 
 use Consumer\CompaniesClient;
+use Consumer\ReviewsClient;
 use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Matcher\Matcher;
 use PhpPact\Consumer\Model\ConsumerRequest;
@@ -13,7 +14,7 @@ use PhpPact\Standalone\MockService\MockServer;
 use PhpPact\Standalone\MockService\MockServerConfig;
 
 
-class CompaniesClientTest extends TestCase
+class ReviewsClientTest extends TestCase
 {
     const PROVIDER_PORT = 7200;
     const PROVIDER_HOST = 'localhost';
@@ -49,10 +50,11 @@ class CompaniesClientTest extends TestCase
         $this->server->stop();
     }
 
-    public function testGetCompanyById()
+    public function testGetReviewsCompanyById()
     {
         $companyId = 1;
-        $expectedName = 'kununu GmbH';
+        $reviewTitle = 'Worst experience ever';
+        $reviewRating = 3.43;
 
         $matcher = new Matcher();
 
@@ -60,7 +62,8 @@ class CompaniesClientTest extends TestCase
         $request = new ConsumerRequest();
         $request
             ->setMethod('GET')
-            ->setPath('/companies/'.$companyId)
+            ->setPath('/reviews')
+            ->setQuery(sprintf('company_id=%s', $companyId))
             ->addHeader('Accept', 'application/json');
 
         //what do we expect as response from the server?
@@ -70,27 +73,35 @@ class CompaniesClientTest extends TestCase
             ->setStatus(200)
             ->addHeader('Content-Type', 'application/json')
             ->setBody([
-                'name' => $matcher->regex($expectedName, '\w')
+                [
+                    'id' => 1,
+                    'title' => $matcher->regex($reviewTitle, '\w'),
+                    'rating' => $matcher->somethingLike($reviewRating)
+                ],
+                [
+                    'id' => 2,
+                    'title' => $matcher->regex($reviewTitle, '\w'),
+                    'rating' => $matcher->somethingLike($reviewRating)
+                ],
             ]);
 
         //build the interaction
         $builder = new InteractionBuilder($this->mockServerConfig);
         $builder
-            ->given('a company exists')
-            ->uponReceiving('a GET request to /companies/{id}')
+            ->given('2 reviews exist for a company')
+            ->uponReceiving('a GET request to /reviews?company_id={id}')
             ->with($request)
             ->willRespondWith($response);
 
-
         //make the request
-        $client = new CompaniesClient(sprintf("http://%s:%s", self::PROVIDER_HOST, self::PROVIDER_PORT));
-        $result = $client->getCompanyById($companyId);
+        $client = new ReviewsClient(sprintf("http://%s:%s", self::PROVIDER_HOST, self::PROVIDER_PORT));
+        $result = $client->getReviewsByCompanyId($companyId);
 
         //Verify that all interactions took place that were registered. This typically should be in each test,
         //that way the test that failed to verify is marked correctly.
-        $builder->verify();
+        $this->assertTrue($builder->verify());
 
-        $this->assertEquals($expectedName, $result['name']);
+        $this->assertEquals($reviewTitle, $result[0]['title']);
     }
 
 }
