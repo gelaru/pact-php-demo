@@ -1,14 +1,14 @@
 {
   "require": {
-    "pact/pact": "*",
-    "phpunit/phpunit": "*",
-    "guzzlehttp/guzzle": "~6.0",
-    "madkom/pact-broker-client": "^1.0",
-    "php-http/guzzle6-adapter": "^1.1"
+    "pact-foundation/pact-php": "*",
+    "guzzlehttp/guzzle": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*"
   },
   "autoload": {
     "psr-4": {
-      "CompaniesConsumer\\": "src/"
+      "Consumer\\": "Consumer/src/"
     }
   }
 }

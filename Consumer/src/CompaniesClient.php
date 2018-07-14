@@ -1,6 +1,6 @@
 <?php
 
-namespace CompaniesConsumer;
+namespace Consumer;
 
 use GuzzleHttp\Client;
 
@@ -19,7 +19,7 @@ class CompaniesClient
 
     /**
      * @param $id
-     * @return Company
+     * @return array
      */
     public function getCompanyById($id)
     {
@@ -27,9 +27,7 @@ class CompaniesClient
 
         $content = $response->getBody()->getContents();
 
-        $company = json_decode($content, true);
-
-        return new Company($company);
+        return json_decode($content, true);
     }
 
 }
