@@ -30,4 +30,16 @@ class CompaniesClient
         return json_decode($content, true);
     }
 
+    /**
+     * @param $id
+     * @return array
+     */
+    public function getCompaniesByProfileId($id)
+    {
+        $response = $this->client->get(sprintf('/companies?profile_id=%s', $id), [ 'headers' => ['Accept' => 'application/json']]);
+
+        $content = $response->getBody()->getContents();
+
+        return json_decode($content, true);
+    }
 }
