@@ -36,19 +36,8 @@ class ReviewsClientTest extends TestCase
 
         $this->mockServerConfig = $config;
 
-        // Instantiate the mock server object with the config. This can be any
-        // instance of MockServerConfigInterface.
-        $this->server = new MockServer($config);
-
-        // Create the process.
-        $this->server->start();
     }
 
-    public function tearDown()
-    {
-        // Stop the process.
-        $this->server->stop();
-    }
 
     public function testGetReviewsCompanyById()
     {

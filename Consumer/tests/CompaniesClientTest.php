@@ -7,48 +7,12 @@ use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Matcher\Matcher;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
+use PhpPact\Standalone\MockService\MockServerEnvConfig;
 use PHPUnit\Framework\TestCase;
-
-use PhpPact\Standalone\MockService\MockServer;
-use PhpPact\Standalone\MockService\MockServerConfig;
 
 
 class CompaniesClientTest extends TestCase
 {
-    const PROVIDER_PORT = 7200;
-    const PROVIDER_HOST = 'localhost';
-    /** @var  MockServer */
-    private $server;
-    private $mockServerConfig;
-
-    public function setUp()
-    {
-        // Create your basic configuration. The host and port will need to match
-        // whatever your Http Service will be using to access the providers data.
-        // it's also possible to provide all this with env vars
-        $config = new MockServerConfig();
-        $config->setHost(self::PROVIDER_HOST);
-        $config->setPort(self::PROVIDER_PORT);
-        $config->setConsumer('CompaniesConsumer');
-        $config->setProvider('CompaniesProvider');
-        $config->setCors(true);
-
-        $this->mockServerConfig = $config;
-
-        // Instantiate the mock server object with the config. This can be any
-        // instance of MockServerConfigInterface.
-        $this->server = new MockServer($config);
-
-        // Create the process.
-        $this->server->start();
-    }
-
-    public function tearDown()
-    {
-        // Stop the process.
-        $this->server->stop();
-    }
-
     public function testGetCompanyById()
     {
         $companyId = 1;
@@ -74,7 +38,8 @@ class CompaniesClientTest extends TestCase
             ]);
 
         //build the interaction
-        $builder = new InteractionBuilder($this->mockServerConfig);
+        $config = new MockServerEnvConfig();
+        $builder = new InteractionBuilder($config);
         $builder
             ->given('a company exists')
             ->uponReceiving('a GET request to /companies/{id}')
@@ -83,7 +48,7 @@ class CompaniesClientTest extends TestCase
 
 
         //make the request
-        $client = new CompaniesClient(sprintf("http://%s:%s", self::PROVIDER_HOST, self::PROVIDER_PORT));
+        $client = new CompaniesClient(sprintf("http://%s:%s", $config->getHost(), $config->getPort()));
         $result = $client->getCompanyById($companyId);
 
         //Verify that all interactions took place that were registered. This typically should be in each test,
@@ -126,7 +91,8 @@ class CompaniesClientTest extends TestCase
             ]);
 
         //build the interaction
-        $builder = new InteractionBuilder($this->mockServerConfig);
+        $config = new MockServerEnvConfig();
+        $builder = new InteractionBuilder($config);
         $builder
             ->given('a company exists')
             ->uponReceiving('a GET request to /companies?profile_id{id}')
@@ -135,7 +101,7 @@ class CompaniesClientTest extends TestCase
 
 
         //make the request
-        $client = new CompaniesClient(sprintf("http://%s:%s", self::PROVIDER_HOST, self::PROVIDER_PORT));
+        $client = new CompaniesClient(sprintf("http://%s:%s", $config->getHost(), $config->getPort()));
         $result = $client->getCompaniesByProfileId($profileId);
 
         //Verify that all interactions took place that were registered. This typically should be in each test,
