@@ -136,7 +136,7 @@ class CompaniesClientTest extends TestCase
 
         //make the request
         $client = new CompaniesClient(sprintf("http://%s:%s", self::PROVIDER_HOST, self::PROVIDER_PORT));
-        $result = $client->getCompanyById($profileId);
+        $result = $client->getCompaniesByProfileId($profileId);
 
         //Verify that all interactions took place that were registered. This typically should be in each test,
         //that way the test that failed to verify is marked correctly.
