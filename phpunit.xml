@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="../vendor/autoload.php" colors="true">
+<phpunit bootstrap="./vendor/autoload.php" colors="true">
     <testsuites>
         <testsuite name="consumer">
-            <directory>./tests</directory>
+            <directory>./Consumer/tests</directory>
         </testsuite>
     </testsuites>
     <listeners>
@@ -23,8 +23,9 @@
         <env name="PACT_CONSUMER_VERSION" value="1.0.0"/>
         <env name="PACT_CONSUMER_TAG" value="master"/>
         <env name="PACT_PROVIDER_NAME" value="ReviewsProvider"/>
-        <env name="PACT_OUTPUT_DIR" value="./example/output"/>
+        <env name="PACT_OUTPUT_DIR" value="./output"/>
         <env name="PACT_MOCK_SERVER_HEALTH_CHECK_TIMEOUT" value="10"/>
-        <env name="PACT_BROKER_URI" value="http://localhost"/>
+        <!-- enable this if you have a broker running -->
+        <!--<env name="PACT_BROKER_URI" value="http://localhost"/>-->
     </php>
 </phpunit>

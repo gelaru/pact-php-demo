@@ -1,21 +1,16 @@
-## First try of using pact (setup from: https://github.com/andykelk/pact-php)
+# Demo of how to use pact using php
 
-1. Clone the repo
-2. Install pact mock service:
-  - Install Ruby and Ruby Gems
-  - Run bundler to get the gems: `gem install bundler && bundle install`
-3. Install composer: curl -sS https://getcomposer.org/installer | php
-4. Install dependencies: php composer.phar install
-5. Start the mock server: `bundle exec pact-mock-service -p 1234 --pact-specification-version 2.0.0 -l log/pact.logs --pact-dir tmp/pacts`
 
-6. Setup [Pact Broker](https://github.com/bethesque/pact_broker) instance with docker-compose ([see](https://github.com/brancz/pact_broker_pg_docker)).
+## Consumer
 
-    run
+Using a test listener, you can publish the generated pacts automatically, 
+simply run the consumer tests with:
+    
+    ./vendor/bin/phpunit --testsuite consumer
+    
+All you need to do is to set your pact broker address in the `phpunit.xml`
 
-            docker-compose pull
-            docker-compose up -d db
-            docker-compose up
 
-7. Run phpunit: `./vendor/bin/phpunit --bootstrap=vendor/autoload.php tests/`
-8. Inspect the pact file in `tmp/pacts`
-9. Open 'http://127.0.0.1:5000' in your browser and you will be in awe!
+## Broker
+
+You can get a pact broker from https://github.com/DiUS/pact_broker-docker
