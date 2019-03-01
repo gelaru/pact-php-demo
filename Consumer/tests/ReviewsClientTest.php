@@ -2,49 +2,35 @@
 
 namespace Consumer\Tests;
 
-use Consumer\CompaniesClient;
 use Consumer\ReviewsClient;
 use PhpPact\Consumer\InteractionBuilder;
 use PhpPact\Consumer\Matcher\Matcher;
 use PhpPact\Consumer\Model\ConsumerRequest;
 use PhpPact\Consumer\Model\ProviderResponse;
+use PhpPact\Standalone\MockService\MockServerConfigInterface;
+use PhpPact\Standalone\MockService\MockServerEnvConfig;
 use PHPUnit\Framework\TestCase;
-
-use PhpPact\Standalone\MockService\MockServer;
-use PhpPact\Standalone\MockService\MockServerConfig;
 
 
 class ReviewsClientTest extends TestCase
 {
-    const PROVIDER_PORT = 7200;
-    const PROVIDER_HOST = 'localhost';
-    /** @var  MockServer */
-    private $server;
-    private $mockServerConfig;
+    private $review;
+    /** @var MockServerConfigInterface */
+    private $config;
 
     public function setUp()
     {
-        // Create your basic configuration. The host and port will need to match
-        // whatever your Http Service will be using to access the providers data.
-        // it's also possible to provide all this with env vars
-        $config = new MockServerConfig();
-        $config->setHost(self::PROVIDER_HOST);
-        $config->setPort(self::PROVIDER_PORT);
-        $config->setConsumer('CompaniesConsumer');
-        $config->setProvider('CompaniesProvider');
-        $config->setCors(true);
+        $review = new \stdClass();
+        $review->companyId = 1;
+        $review->title = 'Worst experience ever';
+        $review->rating = 3.43;
+        $this->review = $review;
 
-        $this->mockServerConfig = $config;
-
+        $this->config = new MockServerEnvConfig();
     }
-
 
     public function testGetReviewsCompanyById()
     {
-        $companyId = 1;
-        $reviewTitle = 'Worst experience ever';
-        $reviewRating = 3.43;
-
         $matcher = new Matcher();
 
         // how will the request look like
@@ -52,7 +38,7 @@ class ReviewsClientTest extends TestCase
         $request
             ->setMethod('GET')
             ->setPath('/reviews')
-            ->setQuery(sprintf('company_id=%s', $companyId))
+            ->setQuery(sprintf('company_id=%s', $this->review->companyId))
             ->addHeader('Accept', 'application/json');
 
         //what do we expect as response from the server?
@@ -64,18 +50,19 @@ class ReviewsClientTest extends TestCase
             ->setBody([
                 [
                     'id' => 1,
-                    'title' => $matcher->regex($reviewTitle, '\w'),
-                    'rating' => $matcher->somethingLike($reviewRating)
+                    'title' => $matcher->regex($this->review->title, '\w'),
+                    'rating' => $matcher->somethingLike($this->review->rating)
                 ],
                 [
                     'id' => 2,
-                    'title' => $matcher->regex($reviewTitle, '\w'),
-                    'rating' => $matcher->somethingLike($reviewRating)
+                    'title' => $matcher->regex($this->review->title, '\w'),
+                    'rating' => $matcher->somethingLike($this->review->rating)
                 ],
             ]);
 
         //build the interaction
-        $builder = new InteractionBuilder($this->mockServerConfig);
+
+        $builder = new InteractionBuilder($this->config);
         $builder
             ->given('2 reviews exist for a company')
             ->uponReceiving('a GET request to /reviews?company_id={id}')
@@ -83,14 +70,14 @@ class ReviewsClientTest extends TestCase
             ->willRespondWith($response);
 
         //make the request
-        $client = new ReviewsClient(sprintf("http://%s:%s", self::PROVIDER_HOST, self::PROVIDER_PORT));
-        $result = $client->getReviewsByCompanyId($companyId);
+        $client = new ReviewsClient(sprintf("http://%s:%s", $this->config->getHost(), $this->config->getPort()));
+        $result = $client->getReviewsByCompanyId($this->review->companyId);
 
         //Verify that all interactions took place that were registered. This typically should be in each test,
         //that way the test that failed to verify is marked correctly.
         $this->assertTrue($builder->verify());
 
-        $this->assertEquals($reviewTitle, $result[0]['title']);
+        $this->assertEquals($this->review->title, $result[0]['title']);
     }
 
 }

@@ -7,6 +7,8 @@ use GuzzleHttp\Client;
 class ReviewsClient
 {
 
+    private $client;
+
     public function __construct($baseUrl)
     {
         $this->client = new Client([
